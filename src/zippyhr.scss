@@ -37,6 +37,7 @@ html,
 body {
   margin: 0;
   height: 100%;
+  min-height: 100vh;
 }
 
 body {
@@ -65,6 +66,9 @@ body {
       }
       display: contents;
     }
+  }
+  & > main {
+    height: 100%;
   }
 }
 
@@ -1492,4 +1496,8 @@ div#companyselect {
       margin-bottom: 20px;
     }
   }
+}
+
+div.blog-container {
+  padding: 0 10%;
 }
