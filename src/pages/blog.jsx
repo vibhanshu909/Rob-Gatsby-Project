@@ -1,4 +1,5 @@
 import { graphql, Link } from "gatsby"
+import { GatsbyImage as Img } from "gatsby-plugin-image"
 import * as React from "react"
 import Bio from "../components/bio"
 import Layout from "../components/Layout"
@@ -21,7 +22,7 @@ const BlogIndex = ({ data, location }) => {
       </Layout>
     )
   }
-
+  const imgList = data.allImageSharp.nodes.map(node => node.fluid.src)
   return (
     <Layout location={location} title={siteTitle}>
       <Seo title="All posts" />
@@ -29,7 +30,10 @@ const BlogIndex = ({ data, location }) => {
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
           const title = post.frontmatter.title || post.fields.slug
-
+          const index = imgList.findIndex(e =>
+            e.includes(post.frontmatter.image?.name)
+          )
+          const imgSrc = index !== -1 ? imgList[index] : undefined
           return (
             <li key={post.fields.slug}>
               <article
@@ -45,7 +49,19 @@ const BlogIndex = ({ data, location }) => {
                   </h2>
                   <small>{post.frontmatter.date}</small>
                 </header>
-                <section>
+                <section style={{ display: "flex", gap: "10px" }}>
+                  {imgSrc && (
+                    <div
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                      }}
+                    >
+                      <Img
+                        image={data.allImageSharp.nodes[index].gatsbyImageData}
+                      />
+                    </div>
+                  )}
                   <p
                     dangerouslySetInnerHTML={{
                       __html: post.frontmatter.description || post.excerpt,
@@ -81,7 +97,18 @@ export const pageQuery = graphql`
           date(formatString: "MMMM DD, YYYY")
           title
           description
+          image {
+            name
+          }
         }
+      }
+    }
+    allImageSharp {
+      nodes {
+        fluid {
+          src
+        }
+        gatsbyImageData
       }
     }
   }
